@@ -65,46 +65,55 @@ CloudSentinel is a production-ready security monitoring platform that unifies th
 
 ```mermaid
 graph TB
-    subgraph "Data Ingestion"
-        A1[AWS GuardDuty] --> N1[aws-guardduty.ts]
-        A2[Azure Defender] --> N2[azure-defender.ts]
-        A3[GCP SCC] --> N3[gcp-scc.ts]
-        A4[Synthetic Data] --> N4[data-loader.ts]
+    subgraph Data Ingestion
+        A1[AWS GuardDuty]
+        A2[Azure Defender]
+        A3[GCP SCC]
+        A4[Synthetic Data]
     end
     
-    subgraph "Normalization Layer"
-        N1 --> S[Common SecurityEvent Schema]
-        N2 --> S
-        N3 --> S
-        N4 --> S
+    subgraph Normalization
+        N1[aws-guardduty.ts]
+        N2[azure-defender.ts]
+        N3[gcp-scc.ts]
+        N4[data-loader.ts]
     end
     
-    subgraph "Analysis Engine"
-        S --> R[rules-engine.ts]
-        R --> RS[risk-scorer.ts]
-        RS --> IA[incident-aggregator.ts]
+    subgraph Analysis Engine
+        S[Common Schema]
+        R[rules-engine.ts]
+        RS[risk-scorer.ts]
+        IA[incident-aggregator.ts]
     end
     
-    subgraph "Correlation"
-        IA --> C1[Group by incident_id]
-        IA --> C2[Cross-cloud by source_ip]
-        IA --> C3[Cross-cloud by actor]
+    subgraph Presentation
+        D[Next.js Dashboard]
+        UI[React Components]
     end
     
-    subgraph "Presentation"
-        C1 --> D[Next.js Dashboard]
-        C2 --> D
-        C3 --> D
-        D --> UI[React Components]
+    subgraph Response
+        AM[Approval Modal]
+        API[Audit API]
+        AL[audit-log.json]
     end
     
-    subgraph "Response & Audit"
-        UI --> AM[Approval Modal]
-        AM --> API[/api/audit]
-        API --> AL[data/audit-log.json]
-    end
+    A1 --> N1
+    A2 --> N2
+    A3 --> N3
+    A4 --> N4
     
-    subgraph "AI Integration"
-        AL --> MCP[mcp-server/server.ts]
-        MCP --> AI[AI Agents via MCP]
-    end
+    N1 --> S
+    N2 --> S
+    N3 --> S
+    N4 --> S
+    
+    S --> R
+    R --> RS
+    RS --> IA
+    
+    IA --> D
+    D --> UI
+    
+    UI --> AM
+    AM --> API
+    API --> AL
