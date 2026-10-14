@@ -1,0 +1,38 @@
+[
+  {
+    "id": "/subscriptions/sub-123/providers/Microsoft.Security/locations/centralus/alerts/azure-alert-001",
+    "name": "azure-alert-001",
+    "type": "Microsoft.Security/locations/alerts",
+    "properties": {
+      "displayName": "Suspicious PowerShell execution",
+      "severity": "High",
+      "status": "Active",
+      "timeGeneratedUtc": "2026-10-13T14:15:00Z",
+      "description": "A suspicious PowerShell command line was executed on the virtual machine, indicating a potential script-based attack.",
+      "compromisedEntity": "azure-vm-web-01",
+      "remediationSteps": "Isolate the VM and investigate the PowerShell script.",
+      "entities": [
+        { "type": "host", "hostname": "azure-vm-web-01" },
+        { "type": "ip", "address": "192.0.2.200" }
+      ]
+    }
+  },
+  {
+    "id": "/subscriptions/sub-123/providers/Microsoft.Security/locations/centralus/alerts/azure-alert-002",
+    "name": "azure-alert-002",
+    "type": "Microsoft.Security/locations/alerts",
+    "properties": {
+      "displayName": "Anonymous IP address logged in to Azure portal",
+      "severity": "Medium",
+      "status": "Active",
+      "timeGeneratedUtc": "2026-10-13T15:45:00Z",
+      "description": "An anonymous IP address was used to log in to the Azure portal, which is an unusual and potentially malicious activity.",
+      "compromisedEntity": "admin@contoso.com",
+      "remediationSteps": "Verify the login activity and enforce MFA.",
+      "entities": [
+        { "type": "account", "name": "admin@contoso.com" },
+        { "type": "ip", "address": "198.51.100.55" }
+      ]
+    }
+  }
+]

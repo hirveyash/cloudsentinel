@@ -1,0 +1,34 @@
+[
+  {
+    "name": "organizations/123456789/sources/987654321/findings/gcp-finding-001",
+    "parent": "organizations/123456789/sources/987654321",
+    "resourceName": "//compute.googleapis.com/projects/my-gcp-project/zones/us-central1-a/instances/gcp-vm-db-01",
+    "state": "ACTIVE",
+    "category": "Trojan:GCP/Backdoor",
+    "severity": "CRITICAL",
+    "createTime": "2026-10-13T16:00:00Z",
+    "eventTime": "2026-10-13T15:55:00Z",
+    "description": "A virtual machine in your project is communicating with a known command and control server.",
+    "sourceProperties": {
+      "project_id": "my-gcp-project",
+      "instance_id": "1234567890123456789",
+      "zone": "us-central1-a",
+      "external_ip": "203.0.113.99"
+    }
+  },
+  {
+    "name": "organizations/123456789/sources/987654321/findings/gcp-finding-002",
+    "parent": "organizations/123456789/sources/987654321",
+    "resourceName": "//storage.googleapis.com/projects/_/buckets/public-data-bucket",
+    "state": "ACTIVE",
+    "category": "Policy Violation: Public Bucket",
+    "severity": "MEDIUM",
+    "createTime": "2026-10-13T17:30:00Z",
+    "eventTime": "2026-10-13T17:25:00Z",
+    "description": "A Cloud Storage bucket is publicly accessible to all users.",
+    "sourceProperties": {
+      "project_id": "my-gcp-project",
+      "bucket_name": "public-data-bucket"
+    }
+  }
+]

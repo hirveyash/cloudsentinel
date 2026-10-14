@@ -1,0 +1,49 @@
+[
+  {
+    "Id": "1234567890abcdef1234567890abcdef",
+    "AccountId": "111222333444",
+    "Region": "us-east-1",
+    "Type": "UnauthorizedAccess:EC2/MaliciousIPCaller.Custom",
+    "Severity": 8.5,
+    "UpdatedAt": "2026-10-13T10:00:00.000Z",
+    "Description": "EC2 instance i-0123456789abcdef0 is communicating with a known malicious IP address 203.0.113.50.",
+    "Resource": {
+      "InstanceDetails": {
+        "InstanceId": "i-0123456789abcdef0",
+        "IamInstanceProfile": { "Id": "AIPAJBLK7RNJK7SKEXAMPLE" }
+      }
+    },
+    "Service": {
+      "Action": {
+        "NetworkConnectionAction": {
+          "RemoteIpDetails": { "IpAddress": { "Ipv4Address": "203.0.113.50" } }
+        }
+      }
+    }
+  },
+  {
+    "Id": "abcdef1234567890abcdef1234567890",
+    "AccountId": "111222333444",
+    "Region": "us-east-1",
+    "Type": "Reconnaissance:EC2/PortProbeUnprotectedPort",
+    "Severity": 5.0,
+    "UpdatedAt": "2026-10-13T11:30:00.000Z",
+    "Description": "EC2 instance i-0987654321fedcba0 has an unprotected port which is being probed by a known malicious host.",
+    "Resource": {
+      "InstanceDetails": {
+        "InstanceId": "i-0987654321fedcba0"
+      }
+    },
+    "Service": {
+      "Action": {
+        "PortProbeAction": {
+          "PortProbeDetails": [
+            {
+              "RemoteIpDetails": { "IpAddress": { "Ipv4Address": "198.51.100.10" } }
+            }
+          ]
+        }
+      }
+    }
+  }
+]
