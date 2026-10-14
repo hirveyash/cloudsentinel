@@ -52,7 +52,7 @@ export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClo
             <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-2xl leading-none">&times;</button>
           </div>
 
-          {/* NEW: Incident Management Section */}
+          {/* Incident Management Section */}
           <div className="mb-8 p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg border border-gray-200 dark:border-zinc-700">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 uppercase tracking-wider">Incident Management</h3>
             
@@ -132,7 +132,7 @@ export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClo
           {/* Evidence Timeline */}
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 border-b border-gray-200 dark:border-zinc-800 pb-2">Evidence Timeline</h3>
           <div className="relative border-l-2 border-gray-200 dark:border-zinc-700 ml-3 space-y-6">
-            {incident.events.map((event: SecurityEvent, idx: number) => (
+            {incident.events.map((event: SecurityEvent) => (
               <div key={event.event_id} className="mb-8 ml-6 relative">
                 <span className="absolute -left-[31px] flex items-center justify-center w-4 h-4 bg-blue-100 rounded-full ring-4 ring-white dark:ring-zinc-900 dark:bg-blue-900"></span>
                 <div className="bg-gray-50 dark:bg-zinc-800 p-4 rounded-lg border border-gray-200 dark:border-zinc-700">

@@ -3,17 +3,35 @@ import { evaluateRules } from './rules-engine';
 import { calculateRiskScore } from './risk-scorer';
 import rawEvents from './synthetic-data/events.json';
 
+interface RawSyntheticEvent {
+  event_id: string;
+  timestamp: string;
+  incident_id: string;
+  provider: string;
+  source_service: string;
+  action: string;
+  outcome: string;
+  severity: string;
+  actor: string | null;
+  resource: string | null;
+  source_ip: string | null;
+  account_context: string;
+  region: string | null;
+  raw_evidence: string;
+  status: string;
+}
+
 export async function loadSecurityEvents(): Promise<SecurityEvent[]> {
   try {
     if (!Array.isArray(rawEvents)) {
       throw new Error('Synthetic data format is invalid.');
     }
     
-    const validEvents = rawEvents.filter((event: any) => 
+    const validEvents = rawEvents.filter((event: RawSyntheticEvent) => 
       event && typeof event.event_id === 'string' && typeof event.timestamp === 'string'
     );
 
-    const eventsWithRules = validEvents.map((event: any) => {
+    const eventsWithRules = validEvents.map((event: RawSyntheticEvent) => {
       const typedEvent: SecurityEvent = {
         ...event,
         rule_matches: [],

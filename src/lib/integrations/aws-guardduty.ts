@@ -1,6 +1,28 @@
 import { SecurityEvent, Severity, Outcome } from '../types/event';
 import rawAwsFindings from './aws-guardduty-raw.json';
 
+interface RawAwsFinding {
+  Id: string;
+  AccountId: string;
+  Region: string;
+  Type: string;
+  Severity: number;
+  UpdatedAt: string;
+  Description: string;
+  Resource: {
+    InstanceDetails?: {
+      InstanceId?: string;
+      IamInstanceProfile?: { Id?: string };
+    };
+  };
+  Service: {
+    Action: {
+      NetworkConnectionAction?: { RemoteIpDetails: { IpAddress: { Ipv4Address: string } } };
+      PortProbeAction?: { PortProbeDetails: Array<{ RemoteIpDetails: { IpAddress: { Ipv4Address: string } } }> };
+    };
+  };
+}
+
 function mapAwsSeverity(awsSeverity: number): Severity {
   if (awsSeverity >= 7) return 'Critical';
   if (awsSeverity >= 4) return 'High';
@@ -9,14 +31,13 @@ function mapAwsSeverity(awsSeverity: number): Severity {
 }
 
 export function normalizeAwsGuardDutyFindings(): SecurityEvent[] {
-  // In a real app, this array would come from the AWS SDK API call.
-  const findings = rawAwsFindings as any[];
+  const findings = rawAwsFindings as RawAwsFinding[];
 
   return findings.map((finding) => ({
     event_id: finding.Id,
-    incident_id: finding.Id, // 1:1 mapping for MVP
+    incident_id: finding.Id,
     timestamp: finding.UpdatedAt,
-    provider: 'AWS',
+    provider: 'AWS' as const,
     source_service: 'GuardDuty',
     action: finding.Type,
     outcome: 'Unknown' as Outcome,
@@ -34,6 +55,6 @@ export function normalizeAwsGuardDutyFindings(): SecurityEvent[] {
     rule_matches: [],
     risk_score: 0,
     risk_factors: [],
-    status: 'Open',
+    status: 'Open' as const,
   }));
 }

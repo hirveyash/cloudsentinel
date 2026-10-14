@@ -1,6 +1,24 @@
 import { SecurityEvent, Severity, Outcome } from '../types/event';
 import rawAzureAlerts from './azure-defender-raw.json';
 
+type AzureEntity = { type: string; hostname?: string; address?: string; name?: string };
+
+interface RawAzureAlert {
+  id: string;
+  name: string;
+  type: string;
+  properties: {
+    displayName: string;
+    severity: string;
+    status: string;
+    timeGeneratedUtc: string;
+    description: string;
+    compromisedEntity: string;
+    remediationSteps: string;
+    entities: AzureEntity[];
+  };
+}
+
 function mapAzureSeverity(azureSeverity: string): Severity {
   switch (azureSeverity.toLowerCase()) {
     case 'high': return 'High';
@@ -10,18 +28,18 @@ function mapAzureSeverity(azureSeverity: string): Severity {
   }
 }
 
-function extractIp(entities: any[]): string | null {
-  const ipEntity = entities?.find((e: any) => e.type === 'ip');
+function extractIp(entities: AzureEntity[]): string | null {
+  const ipEntity = entities?.find((e) => e.type === 'ip');
   return ipEntity?.address || null;
 }
 
-function extractActor(entities: any[], compromisedEntity: string): string | null {
-  const accountEntity = entities?.find((e: any) => e.type === 'account');
+function extractActor(entities: AzureEntity[], compromisedEntity: string): string | null {
+  const accountEntity = entities?.find((e) => e.type === 'account');
   return accountEntity?.name || compromisedEntity || null;
 }
 
 export function normalizeAzureDefenderAlerts(): SecurityEvent[] {
-  const alerts = rawAzureAlerts as any[];
+  const alerts = rawAzureAlerts as RawAzureAlert[];
 
   return alerts.map((alert) => {
     const props = alert.properties;
@@ -37,7 +55,7 @@ export function normalizeAzureDefenderAlerts(): SecurityEvent[] {
       outcome: 'Unknown' as Outcome,
       severity: mapAzureSeverity(props.severity),
       actor: extractActor(entities, props.compromisedEntity),
-      resource: entities.find((e: any) => e.type === 'host')?.hostname || props.compromisedEntity || 'Unknown Resource',
+      resource: entities.find((e) => e.type === 'host')?.hostname || props.compromisedEntity || 'Unknown Resource',
       source_ip: extractIp(entities),
       account_context: 'sub-123', 
       region: 'centralus', 
