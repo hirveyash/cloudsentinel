@@ -4,8 +4,14 @@ import path from 'path';
 import { AuditRecord } from '@/src/lib/types/event';
 
 const AUDIT_LOG_PATH = path.join(process.cwd(), 'data', 'audit-log.json');
+const API_KEY = process.env.NEXT_PUBLIC_CLOUDSENTINEL_API_KEY;
 
 export async function POST(request: NextRequest) {
+  const authHeader = request.headers.get('authorization');
+  if (!API_KEY || authHeader !== `Bearer ${API_KEY}`) {
+    return NextResponse.json({ error: 'Unauthorized: Invalid or missing API key' }, { status: 401 });
+  }
+
   try {
     const body = await request.json();
     const { incident_id, action, target_resource, analyst_name, justification } = body;
@@ -25,20 +31,17 @@ export async function POST(request: NextRequest) {
       status: 'Approved',
     };
 
-    // Ensure directory exists
     const dir = path.dirname(AUDIT_LOG_PATH);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
     }
 
-    // Read existing log safely
     let auditLog: AuditRecord[] = [];
     if (fs.existsSync(AUDIT_LOG_PATH)) {
       const fileContent = fs.readFileSync(AUDIT_LOG_PATH, 'utf-8');
       auditLog = JSON.parse(fileContent || '[]');
     }
 
-    // Append and write
     auditLog.push(newRecord);
     fs.writeFileSync(AUDIT_LOG_PATH, JSON.stringify(auditLog, null, 2), 'utf-8');
 
@@ -49,7 +52,12 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authHeader = request.headers.get('authorization');
+  if (!API_KEY || authHeader !== `Bearer ${API_KEY}`) {
+    return NextResponse.json({ error: 'Unauthorized: Invalid or missing API key' }, { status: 401 });
+  }
+
   try {
     if (!fs.existsSync(AUDIT_LOG_PATH)) {
       return NextResponse.json([]);

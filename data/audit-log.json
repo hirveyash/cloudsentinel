@@ -8,5 +8,25 @@
     "analyst_name": "jerry",
     "justification": "Demo",
     "status": "Approved"
+  },
+  {
+    "id": "audit-1792015354623",
+    "timestamp": "2026-10-14T22:02:34.623Z",
+    "incident_id": "CORR-IP-203-0-113-77",
+    "action": "Quarantine Resource",
+    "target_resource": "arn:aws:iam::123456789012:user/compromised-admin",
+    "analyst_name": "jerry",
+    "justification": "jerry",
+    "status": "Approved"
+  },
+  {
+    "id": "audit-1792015616171",
+    "timestamp": "2026-10-14T22:06:56.171Z",
+    "incident_id": "CORR-IP-203-0-113-77",
+    "action": "Quarantine Resource",
+    "target_resource": "arn:aws:iam::123456789012:user/compromised-admin",
+    "analyst_name": "smith",
+    "justification": "testing API",
+    "status": "Approved"
   }
 ]

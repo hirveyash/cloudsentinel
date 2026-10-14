@@ -33,17 +33,22 @@ export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClo
   };
 
   const handleApproveAction = async (actionData: Omit<AuditRecord, 'id' | 'timestamp' | 'status'>) => {
+    const apiKey = process.env.NEXT_PUBLIC_CLOUDSENTINEL_API_KEY;
+    
     const response = await fetch('/api/audit', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+      },
       body: JSON.stringify(actionData),
     });
 
     if (!response.ok) {
-      throw new Error('Failed to record audit action');
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to record audit action');
     }
 
-    // Optionally add a note to the incident automatically
     const autoNote = `[${new Date().toLocaleString()}] ACTION APPROVED: ${actionData.action} by ${actionData.analyst_name}`;
     onUpdateIncident({
       ...incident,
@@ -60,7 +65,6 @@ export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClo
     }
   };
 
-  // Extract primary resource from the first event for the action target
   const primaryResource = incident.events[0]?.resource || 'Unknown Resource';
 
   return (
@@ -120,13 +124,20 @@ export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClo
             </div>
           </div>
 
-          {/* NEW: Response Actions Section */}
           <div className="mb-8 p-4 bg-red-50 dark:bg-red-900/10 rounded-lg border border-red-200 dark:border-red-900/30">
             <h3 className="text-sm font-semibold text-red-900 dark:text-red-300 mb-3 uppercase tracking-wider flex items-center gap-2">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
               Response Actions
             </h3>
-            <p className="text-xs text-red-700 dark:text-red-400 mb-3">Executing an action requires analyst approval and will be recorded in the immutable audit trail.</p>
+            
+            <div className="mb-3 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-md flex items-start gap-2">
+              <svg className="w-4 h-4 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+              <p className="text-xs text-yellow-800 dark:text-yellow-300">
+                <strong>Simulation Mode:</strong> Actions are logged to the immutable audit trail for compliance, but do <em>not</em> execute against real cloud resources in this demo environment.
+              </p>
+            </div>
+
+            <p className="text-xs text-red-700 dark:text-red-400 mb-3">Executing an action requires analyst approval and will be recorded.</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setPendingAction({ name: 'Quarantine Resource', resource: primaryResource })}
@@ -194,7 +205,6 @@ export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClo
         </div>
       </div>
 
-      {/* Approval Modal */}
       {pendingAction && (
         <ApprovalModal
           incidentId={incident.incident_id}

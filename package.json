@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@aws-sdk/client-guardduty": "^3.700.0",
+    "@modelcontextprotocol/sdk": "^1.32.1",
     "next": "16.4.0",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "^4",
