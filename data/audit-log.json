@@ -1,0 +1,12 @@
+[
+  {
+    "id": "audit-1791972522503",
+    "timestamp": "2026-10-14T10:08:42.503Z",
+    "incident_id": "INC-1001",
+    "action": "Quarantine Resource",
+    "target_resource": "arn:aws:iam::123456789012:user/dev-admin",
+    "analyst_name": "jerry",
+    "justification": "Demo",
+    "status": "Approved"
+  }
+]

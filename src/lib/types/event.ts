@@ -39,5 +39,17 @@ export interface Incident {
   first_seen: string;
   last_seen: string;
   events: SecurityEvent[];
-  analyst_notes: string[]; // NEW: Array to store investigation notes
+  analyst_notes: string[];
+}
+
+// NEW: Audit Record Interface for Response Workflows
+export interface AuditRecord {
+  id: string;
+  timestamp: string;
+  incident_id: string;
+  action: string;
+  target_resource: string;
+  analyst_name: string;
+  justification: string;
+  status: 'Approved' | 'Denied';
 }
