@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SecurityEvent, Incident } from '../../src/lib/types/event';
 import EventsTable from './events-table';
 import EventDetailDrawer from './event-detail-drawer';
@@ -12,22 +12,77 @@ interface DashboardClientProps {
   incidents: Incident[];
 }
 
+interface LocalIncidentStorage {
+  incident_id: string;
+  status?: string;
+  analyst_notes?: string[];
+}
+
+const STORAGE_KEY = 'cloudsentinel_incidents_v1';
+
 export default function DashboardClient({ events, incidents }: DashboardClientProps) {
   const [activeTab, setActiveTab] = useState<'events' | 'incidents'>('incidents');
   const [selectedEvent, setSelectedEvent] = useState<SecurityEvent | null>(null);
   
-  // Manage incidents in state so updates persist during the session
   const [incidentsState, setIncidentsState] = useState<Incident[]>(incidents);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
 
-  // Function to update an incident in the state
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          const mergedIncidents = incidents.map((serverInc) => {
+            const localInc = parsed.find(
+              (p: LocalIncidentStorage) => p.incident_id === serverInc.incident_id
+            );
+            if (localInc) {
+              return {
+                ...serverInc,
+                status: localInc.status || serverInc.status,
+                analyst_notes: Array.isArray(localInc.analyst_notes) 
+                  ? localInc.analyst_notes 
+                  : serverInc.analyst_notes,
+              };
+            }
+            return serverInc;
+          });
+          
+          // eslint-disable-next-line react-hooks/set-state-in-effect
+          setIncidentsState(mergedIncidents);
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to load incident state from localStorage, using default.', error);
+    } finally {
+      setIsHydrated(true);
+    }
+  }, [incidents]);
+
+  useEffect(() => {
+    if (isHydrated) {
+      try {
+        const minimalState: LocalIncidentStorage[] = incidentsState.map((inc) => ({
+          incident_id: inc.incident_id,
+          status: inc.status,
+          analyst_notes: inc.analyst_notes,
+        }));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(minimalState));
+      } catch (error) {
+        console.error('Failed to save incident state to localStorage', error);
+      }
+    }
+  }, [incidentsState, isHydrated]);
+
   const handleUpdateIncident = (updatedIncident: Incident) => {
     setIncidentsState((prev) => 
       prev.map((inc) => 
         inc.incident_id === updatedIncident.incident_id ? updatedIncident : inc
       )
     );
-    setSelectedIncident(updatedIncident); // Update the drawer view as well
+    setSelectedIncident(updatedIncident);
   };
 
   return (

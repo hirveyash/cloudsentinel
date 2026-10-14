@@ -52,11 +52,9 @@ export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClo
             <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 text-2xl leading-none">&times;</button>
           </div>
 
-          {/* Incident Management Section */}
           <div className="mb-8 p-4 bg-gray-50 dark:bg-zinc-800 rounded-lg border border-gray-200 dark:border-zinc-700">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 uppercase tracking-wider">Incident Management</h3>
             
-            {/* Status Selector */}
             <div className="mb-4">
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Current Status</p>
               <div className="flex gap-2">
@@ -76,7 +74,6 @@ export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClo
               </div>
             </div>
 
-            {/* Notes Input */}
             <div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Add Investigation Note</p>
               <div className="flex gap-2">
@@ -99,7 +96,6 @@ export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClo
             </div>
           </div>
 
-          {/* Incident Metrics */}
           <div className="grid grid-cols-3 gap-4 mb-8">
             <div className="bg-gray-50 dark:bg-zinc-800 p-3 rounded-lg border border-gray-200 dark:border-zinc-700">
               <p className="text-xs text-gray-500 dark:text-gray-400 uppercase">Max Risk</p>
@@ -115,7 +111,6 @@ export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClo
             </div>
           </div>
 
-          {/* Analyst Notes History */}
           {incident.analyst_notes.length > 0 && (
             <div className="mb-8">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3 uppercase tracking-wider">Investigation Notes</h3>
@@ -129,7 +124,6 @@ export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClo
             </div>
           )}
 
-          {/* Evidence Timeline */}
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 border-b border-gray-200 dark:border-zinc-800 pb-2">Evidence Timeline</h3>
           <div className="relative border-l-2 border-gray-200 dark:border-zinc-700 ml-3 space-y-6">
             {incident.events.map((event: SecurityEvent) => (
