@@ -4,7 +4,7 @@ import path from 'path';
 import { AuditRecord } from '@/src/lib/types/event';
 
 const AUDIT_LOG_PATH = path.join(process.cwd(), 'data', 'audit-log.json');
-const API_KEY = process.env.NEXT_PUBLIC_CLOUDSENTINEL_API_KEY;
+const API_KEY = process.env.CLOUDSENTINEL_API_KEY;
 
 export async function POST(request: NextRequest) {
   const authHeader = request.headers.get('authorization');

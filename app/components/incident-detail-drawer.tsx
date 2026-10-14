@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Incident, SecurityEvent, IncidentStatus, AuditRecord } from '../../src/lib/types/event';
 import ApprovalModal from './approval-modal';
+import { approveResponseAction } from '../../src/lib/actions/audit';
 
 interface IncidentDetailDrawerProps {
   incident: Incident | null;
@@ -13,6 +14,7 @@ interface IncidentDetailDrawerProps {
 export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClose }: IncidentDetailDrawerProps) {
   const [newNote, setNewNote] = useState('');
   const [pendingAction, setPendingAction] = useState<{ name: string; resource: string } | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   if (!incident) return null;
 
@@ -33,27 +35,27 @@ export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClo
   };
 
   const handleApproveAction = async (actionData: Omit<AuditRecord, 'id' | 'timestamp' | 'status'>) => {
-    const apiKey = process.env.NEXT_PUBLIC_CLOUDSENTINEL_API_KEY;
-    
-    const response = await fetch('/api/audit', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      },
-      body: JSON.stringify(actionData),
-    });
+    setActionError(null);
+    try {
+      // Call the server action directly — no secret needed, no HTTP request
+      await approveResponseAction({
+        incident_id: actionData.incident_id,
+        action: actionData.action,
+        target_resource: actionData.target_resource,
+        analyst_name: actionData.analyst_name,
+        justification: actionData.justification,
+      });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to record audit action');
+      const autoNote = `[${new Date().toLocaleString()}] ACTION APPROVED: ${actionData.action} by ${actionData.analyst_name}`;
+      onUpdateIncident({
+        ...incident,
+        analyst_notes: [autoNote, ...incident.analyst_notes],
+      });
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to record action';
+      setActionError(message);
+      throw err; // Re-throw so the modal can show the error
     }
-
-    const autoNote = `[${new Date().toLocaleString()}] ACTION APPROVED: ${actionData.action} by ${actionData.analyst_name}`;
-    onUpdateIncident({
-      ...incident,
-      analyst_notes: [autoNote, ...incident.analyst_notes],
-    });
   };
 
   const getStatusColor = (status: string) => {
@@ -136,6 +138,12 @@ export default function IncidentDetailDrawer({ incident, onUpdateIncident, onClo
                 <strong>Simulation Mode:</strong> Actions are logged to the immutable audit trail for compliance, but do <em>not</em> execute against real cloud resources in this demo environment.
               </p>
             </div>
+
+            {actionError && (
+              <div className="mb-3 p-2 bg-red-100 dark:bg-red-900/30 border border-red-300 dark:border-red-800 rounded-md">
+                <p className="text-xs text-red-800 dark:text-red-300">{actionError}</p>
+              </div>
+            )}
 
             <p className="text-xs text-red-700 dark:text-red-400 mb-3">Executing an action requires analyst approval and will be recorded.</p>
             <div className="flex gap-3">

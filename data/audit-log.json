@@ -28,5 +28,15 @@
     "analyst_name": "smith",
     "justification": "testing API",
     "status": "Approved"
+  },
+  {
+    "id": "audit-1792018794119-0jairan",
+    "timestamp": "2026-10-14T22:59:54.119Z",
+    "incident_id": "CORR-IP-203-0-113-77",
+    "action": "Quarantine Resource",
+    "target_resource": "arn:aws:iam::123456789012:user/compromised-admin",
+    "analyst_name": "J Smith",
+    "justification": "Testing",
+    "status": "Approved"
   }
 ]
