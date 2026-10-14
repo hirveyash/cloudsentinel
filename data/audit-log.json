@@ -38,5 +38,35 @@
     "analyst_name": "J Smith",
     "justification": "Testing",
     "status": "Approved"
+  },
+  {
+    "id": "audit-1792019513214-wesn73c",
+    "timestamp": "2026-10-14T23:11:53.214Z",
+    "incident_id": "INC-1",
+    "action": "Test Action",
+    "target_resource": "test-res",
+    "analyst_name": "Tester",
+    "justification": "Testing recovery",
+    "status": "Approved"
+  },
+  {
+    "id": "audit-1792019723035-4iftwsm",
+    "timestamp": "2026-10-14T23:15:23.035Z",
+    "incident_id": "INC-1",
+    "action": "Test Action",
+    "target_resource": "test-res",
+    "analyst_name": "Tester",
+    "justification": "Testing recovery",
+    "status": "Approved"
+  },
+  {
+    "id": "audit-1792019923879-58qfbs4",
+    "timestamp": "2026-10-14T23:18:43.879Z",
+    "incident_id": "INC-1",
+    "action": "Test Action",
+    "target_resource": "test-res",
+    "analyst_name": "Tester",
+    "justification": "Testing recovery",
+    "status": "Approved"
   }
 ]

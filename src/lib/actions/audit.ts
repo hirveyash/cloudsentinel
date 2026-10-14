@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { AuditRecord } from '../types/event';
 
-const AUDIT_LOG_PATH = path.join(process.cwd(), 'data', 'audit-log.json');
+const DEFAULT_AUDIT_LOG_PATH = path.join(process.cwd(), 'data', 'audit-log.json');
 
 export interface ApproveActionInput {
   incident_id: string;
@@ -14,15 +14,13 @@ export interface ApproveActionInput {
   justification: string;
 }
 
-/**
- * Server Action: Approve a response action and record it in the audit trail.
- * 
- * This runs entirely on the server. The secret API key is never exposed to the browser.
- * The client calls this function directly — no HTTP request, no secret in headers.
- */
 export async function approveResponseAction(
-  input: ApproveActionInput
+  input: ApproveActionInput,
+  customLogPath?: string
 ): Promise<AuditRecord> {
+  // If customLogPath is provided (by tests), use it. Otherwise, use the default.
+  const AUDIT_LOG_PATH = customLogPath || DEFAULT_AUDIT_LOG_PATH;
+
   // 1. Validate required fields
   if (!input.incident_id || !input.action || !input.analyst_name || !input.justification) {
     throw new Error('Missing required fields: incident_id, action, analyst_name, and justification are all required.');
@@ -59,7 +57,7 @@ export async function approveResponseAction(
     fs.mkdirSync(dir, { recursive: true });
   }
 
-  // 5. Read existing log (with safe fallback)
+  // 5. Read existing log (with safe fallback for corruption)
   let auditLog: AuditRecord[] = [];
   if (fs.existsSync(AUDIT_LOG_PATH)) {
     try {
